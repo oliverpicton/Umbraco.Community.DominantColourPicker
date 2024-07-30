@@ -1,0 +1,68 @@
+<Project Sdk="Microsoft.NET.Sdk.Razor">
+	<PropertyGroup>
+		<TargetFrameworks>net6.0;net7.0;net8.0</TargetFrameworks>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<IsPackable>true</IsPackable>
+		<PackageId>Umbraco.Community.DominantColourPicker</PackageId>
+		<Product>Umbraco.Community.DominantColourPicker</Product>
+		<Title>A dominant colour picker for Umbraco</Title>
+		<Description>Allows a dominant pallete of colours to be selected from a media library image and picked using a colour swatch.</Description>
+		<PackageTags>umbraco plugin property editor package umbraco-marketplace Dominant colour picker</PackageTags>
+		<StaticWebAssetBasePath>App_Plugins/DominantColourPicker</StaticWebAssetBasePath>
+		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+		<Version>0.0.1-alpha</Version>
+		<Authors>Oliver Picton</Authors>
+		<Copyright>$([System.DateTime]::UtcNow.ToString(`yyyy`)) © Oliver Picton</Copyright>
+		<PackageProjectUrl>https://github.com/oliverpicton/Umbraco.Community.DominantColourPicker</PackageProjectUrl>
+		<RepositoryUrl>https://github.com/oliverpicton/Umbraco.Community.DominantColourPicker</RepositoryUrl>
+		<PackageReadmeFile>Readme.md</PackageReadmeFile>
+		<PackageReleaseNotes></PackageReleaseNotes>
+		<RepositoryType>git</RepositoryType>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<RootNamespace>Umbraco.Community.DominantColourPicker</RootNamespace>
+		<FileVersion>0.0.1</FileVersion>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<FrameworkReference Include="Microsoft.AspNetCore.App" />
+	</ItemGroup>
+
+	<ItemGroup Condition=" '$(TargetFramework)' == 'net6.0' ">
+		<PackageReference Include="Umbraco.Cms.Core" Version="10.*" />
+		<PackageReference Include="Umbraco.Cms.Web.BackOffice" Version="10.*" />
+	</ItemGroup>
+
+	<ItemGroup Condition=" '$(TargetFramework)' == 'net7.0' ">
+		<PackageReference Include="Umbraco.Cms.Core" Version="11.*" />
+		<PackageReference Include="Umbraco.Cms.Web.BackOffice" Version="11.*" />
+	</ItemGroup>
+
+	<ItemGroup Condition=" '$(TargetFramework)' == 'net8.0' ">
+		<PackageReference Include="Umbraco.Cms.Core" Version="(13.*,14]" />
+		<PackageReference Include="Umbraco.Cms.Web.BackOffice" Version="(13.*,14]" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<None Include="..\..\Readme.md">
+			<Pack>True</Pack>
+			<PackagePath>\</PackagePath>
+		</None>
+	</ItemGroup>
+
+	<ItemGroup>
+		<SupportedPlatform Include="browser" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Content Update="wwwroot\backoffice\dominant-colour-picker\assets\color-thief.umd.js">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Content>
+	  <Content Update="wwwroot\backoffice\dominant-colour-picker\dominantColourPicker.controller.js">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Content>
+	  <Content Update="wwwroot\backoffice\dominant-colour-picker\dominantColourPicker.html">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Content>
+	</ItemGroup>
+</Project>

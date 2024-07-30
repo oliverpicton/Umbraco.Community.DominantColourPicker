@@ -1,0 +1,18 @@
+﻿<div ng-controller="Umbraco.Community.DominantColourPickerController as vm">
+    <ng-form name="vm.modelValueForm">
+        <div ng-show="imageAlias != ''" class="colourWrapper">
+            <div ng-show="showImage" class="image-section">                
+                <umb-color-swatches 
+                    colors="model.items"
+                    selected-color="model.value"
+                    size="s"
+                    use-label="model.config.useLabel"
+                    on-select="vm.selectColor(color)">
+                </umb-color-swatches>
+            </div>
+            <div ng-show="!showImage">No image found</div>
+        </div>
+        <div ng-show="imageAlias == ''">Please select an image alias for the property</div>
+        <input type="hidden" name="selectedColor" ng-model="model.selectedColor" />
+    </ng-form>
+</div>

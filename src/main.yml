@@ -1,0 +1,41 @@
+name: Build
+
+on:
+  release:
+    types: [published]
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    env:
+      BUILD_CONFIG: "Release"
+      PROJECT: "./src/Umbraco.Community.DominantColourPicker/Umbraco.Community.DominantColourPicker.csproj"
+      BUILD_VERSION: ${{ github.event.release.tag_name || '1.0.4-beta' }}
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: |
+            6.x
+            7.x
+            8.x
+
+      - name: Restore package dependencies
+        run: nuget restore $PROJECT
+
+      - name: Build package
+        run: dotnet build $PROJECT -c $BUILD_CONFIG -p:Version=$BUILD_VERSION --no-restore
+        
+      - name: Publish
+        if: github.event_name == 'release'
+        run: nuget push **\*.nupkg -Source 'https://api.nuget.org/v3/index.json' -ApiKey ${{secrets.NUGET_API_KEY}}
