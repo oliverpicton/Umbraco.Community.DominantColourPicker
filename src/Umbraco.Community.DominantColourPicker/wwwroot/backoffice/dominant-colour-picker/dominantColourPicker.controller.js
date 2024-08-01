@@ -65,7 +65,6 @@
 
         var unsubscribeOpen = eventsService.on("appState.editors.open", function (event, args) {
             if (args.editorState && args.editorState.content) {
-                // Logic if needed on editor open
             }
         });
 
@@ -131,9 +130,4 @@
                 updateTintedPalette($scope.tintPercentage, $scope.tintColour);
             };
         }
-
-        assetsService
-            .load([
-                "/App_Plugins/DominantColourPicker/backoffice/dominant-colour-picker/assets/color-thief.umd.js"
-            ]);
     });
