@@ -3,8 +3,10 @@
         $scope.palette = [];
         $scope.tintPercentage = $scope.model.config.tintPercentage || 50;
 
+        let initialMediaKey = null;
+
         function fetchMedia(mediaPicker) {
-            console.log('here');
+            console.log('Fetching media');
             if (mediaPicker && mediaPicker.value && mediaPicker.value.length > 0) {
                 var imageId = mediaPicker.value[0].mediaKey;
 
@@ -34,6 +36,14 @@
             return null;
         }
 
+        function initializeMediaKey() {
+            var mediaPickerInfo = findPropertyByAlias(editorState.current.variants, imageAlias);
+            if (mediaPickerInfo && mediaPickerInfo.property.value && mediaPickerInfo.property.value.length > 0) {
+                initialMediaKey = mediaPickerInfo.property.value[0].mediaKey;
+                console.log('Initial Media Key:', initialMediaKey);
+            }
+        }
+
         var unsubscribeOpen = eventsService.on("appState.editors.open", function (event, args) {
             console.log("An editor is opened:", args);
             if (args.editorState && args.editorState.content) {
@@ -44,17 +54,23 @@
         const imageAlias = $scope.model.config.imageAlias;
         const sliderAlias = $scope.model.config.tintSliderAlias;
 
+        // Initialize the initialMediaKey when the controller is loaded
+        $timeout(initializeMediaKey, 0);
+
         $scope.$watch(function () {
             return editorState.current.variants;
         }, function (newVal, oldVal) {
             if (newVal !== oldVal) {
                 var mediaPickerInfo = findPropertyByAlias(editorState.current.variants, imageAlias);
-                if (mediaPickerInfo) {
-                    fetchMedia(mediaPickerInfo.property);
+                if (mediaPickerInfo && mediaPickerInfo.property.value && mediaPickerInfo.property.value.length > 0) {
+                    var currentMediaKey = mediaPickerInfo.property.value[0].mediaKey;
+                    if (currentMediaKey !== initialMediaKey) {
+                        fetchMedia(mediaPickerInfo.property);
+                        initialMediaKey = currentMediaKey; // Update the initialMediaKey to the new value
+                    }
                 }
-                console.log(sliderAlias);
+
                 var sliderInfo = findPropertyByAlias(editorState.current.variants, sliderAlias);
-                console.log(sliderInfo);
                 if (sliderInfo) {
                     var sliderValue = sliderInfo.property.value;
                     if (sliderValue !== $scope.tintPercentage) {
@@ -65,11 +81,9 @@
                             return { value: rgbToHex(...tintedColor) };
                         });
 
-                        if (!$scope.$$phase) {
-                            $scope.$apply(function () {
-                                $scope.model.items = tintedPalette;
-                            });
-                        }
+                        $timeout(function () {
+                            $scope.model.items = tintedPalette;
+                        });
                     }
                 }
             }
@@ -103,14 +117,9 @@
                     return { value: rgbToHex(...tintedColor) };
                 });
 
-                $scope.$apply(function () {
+                $timeout(function () {
                     $scope.model.items = tintedPalette;
                 });
             };
         }
-
-        assetsService
-            .load([
-                "/App_Plugins/DominantColourPicker/backoffice/dominant-colour-picker/assets/color-thief.umd.js"
-            ])
     });
