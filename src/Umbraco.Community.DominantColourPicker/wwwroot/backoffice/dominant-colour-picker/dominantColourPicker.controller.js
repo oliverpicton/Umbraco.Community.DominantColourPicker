@@ -41,6 +41,7 @@
             if (mediaPickerInfo && mediaPickerInfo.property.value && mediaPickerInfo.property.value.length > 0) {
                 initialMediaKey = mediaPickerInfo.property.value[0].mediaKey;
                 console.log('Initial Media Key:', initialMediaKey);
+                fetchMedia(mediaPickerInfo.property); // Ensure fetchMedia is called on initial load
             }
         }
 
@@ -54,7 +55,7 @@
         const imageAlias = $scope.model.config.imageAlias;
         const sliderAlias = $scope.model.config.tintSliderAlias;
 
-        // Initialize the initialMediaKey when the controller is loaded
+        // Initialize the initialMediaKey and fetch media when the controller is loaded
         $timeout(initializeMediaKey, 0);
 
         $scope.$watch(function () {
@@ -81,6 +82,7 @@
                             return { value: rgbToHex(...tintedColor) };
                         });
 
+                        // Use $timeout to ensure this runs outside of the current digest cycle
                         $timeout(function () {
                             $scope.model.items = tintedPalette;
                         });
@@ -122,4 +124,9 @@
                 });
             };
         }
+
+        assetsService
+            .load([
+                "/App_Plugins/DominantColourPicker/backoffice/dominant-colour-picker/assets/color-thief.umd.js"
+            ]);
     });
