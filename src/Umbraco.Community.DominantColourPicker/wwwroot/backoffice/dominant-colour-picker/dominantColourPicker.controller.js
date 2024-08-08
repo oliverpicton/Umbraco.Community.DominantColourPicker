@@ -1,5 +1,5 @@
 ﻿angular.module("umbraco")
-    .controller("Umbraco.Community.DominantColourPickerController", function ($scope, $timeout, assetsService, editorState, mediaResource, mediaHelper, eventsService) {
+    .controller("Umbraco.Community.DominantColourPickerController", function ($scope, $timeout, editorState, mediaResource, mediaHelper, eventsService, editorService) {
         $scope.palette = [];
         $scope.tintPercentage = $scope.model.config.tintPercentage || 50;
         $scope.tintColour = hexToRgb($scope.model.config.tintColour || "#000000");
@@ -18,7 +18,7 @@
                     initializeColorPicker($scope.imagePath, $scope);
                 });
             } else {
-                $scope.imagePath = "";
+                $scope.imagePath = '';
                 $scope.media = null;
                 $scope.showImage = false;
             }
@@ -31,16 +31,27 @@
                         if (property.alias === propertyAlias) {
                             return { property, variant };
                         }
+
+                        if (property.editor === "Umbraco.BlockList" && property.value?.contentData) {
+                            for (let block of property.value.contentData) {
+                                if (block[propertyAlias] != null) {                               
+                                    return { property: { value: block[propertyAlias] }, variant };
+                                }
+                            }
+                        }
                     }
                 }
             }
             return null;
         }
 
-        function initializeMediaKey() {
-            var mediaPickerInfo = findPropertyByAlias(editorState.current.variants, imageAlias);
+        function initialize(content, imageAlias) {
+            var mediaPickerInfo = findPropertyByAlias(content, imageAlias);
+
             if (mediaPickerInfo && mediaPickerInfo.property.value && mediaPickerInfo.property.value.length > 0) {
+
                 initialMediaKey = mediaPickerInfo.property.value[0].mediaKey;
+
                 fetchMedia(mediaPickerInfo.property);
             }
         }
@@ -63,19 +74,14 @@
             }
         }
 
-        var unsubscribeOpen = eventsService.on("appState.editors.open", function (event, args) {
-            if (args.editorState && args.editorState.content) {
-            }
-        });
-
         const imageAlias = $scope.model.config.imageAlias;
         const sliderAlias = $scope.model.config.tintSliderAlias;
-
-        $timeout(initializeMediaKey, 0);
+        
+        $timeout(initialize(editorState.current.variants, imageAlias), 0);
 
         $scope.$watch(function () {
             return editorState.current.variants;
-        }, function (newVal, oldVal) {
+        }, function (newVal, oldVal) {            
             if (newVal !== oldVal) {
                 var mediaPickerInfo = findPropertyByAlias(editorState.current.variants, imageAlias);
                 if (mediaPickerInfo && mediaPickerInfo.property.value && mediaPickerInfo.property.value.length > 0) {
